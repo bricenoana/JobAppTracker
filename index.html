@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track job applications, interviews, and outcomes in one place.">
+    <title>Job Application Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">CAREER WORKSPACE</p>
+                <h1>Job Application Tracker</h1>
+                <p class="intro">Keep every opportunity and next step in one clear view.</p>
+            </div>
+            <div class="header-mark" aria-hidden="true">JT</div>
+        </header>
+
+        <section class="stats" aria-label="Application summary">
+            <article class="stat-card stat-total">
+                <span class="stat-label">Total applications</span>
+                <strong id="total">0</strong>
+                <span class="stat-note">All opportunities</span>
+            </article>
+            <article class="stat-card stat-applied">
+                <span class="stat-label">Applied</span>
+                <strong id="appliedCount">0</strong>
+                <span class="stat-note">Awaiting response</span>
+            </article>
+            <article class="stat-card stat-interview">
+                <span class="stat-label">Interviews</span>
+                <strong id="interviewCount">0</strong>
+                <span class="stat-note">Conversations lined up</span>
+            </article>
+            <article class="stat-card stat-rejected">
+                <span class="stat-label">Rejected</span>
+                <strong id="rejectedCount">0</strong>
+                <span class="stat-note">Closed opportunities</span>
+            </article>
+        </section>
+
+        <section class="panel add-panel" aria-labelledby="add-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="section-kicker">NEW OPPORTUNITY</p>
+                    <h2 id="add-heading">Add an application</h2>
+                </div>
+                <span class="step-badge">01</span>
+            </div>
+
+            <form id="applicationForm">
+                <div class="form-grid">
+                    <label>Company
+                        <input id="company" type="text" placeholder="e.g. Northstar Labs" required>
+                    </label>
+                    <label>Job title
+                        <input id="jobTitle" type="text" placeholder="e.g. Product Designer" required>
+                    </label>
+                    <label>Date applied
+                        <input id="dateApplied" type="date" required>
+                    </label>
+                    <label>Status
+                        <select id="status">
+                            <option value="Applied">Applied</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Offer">Offer</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </label>
+                    <label class="details-field">Details <span class="optional">Optional</span>
+                        <textarea id="details" rows="3" placeholder="Add a contact, link, next step, or note"></textarea>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button class="primary-button" type="submit">Add application <span aria-hidden="true">→</span></button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel tracker-panel" aria-labelledby="tracker-heading">
+            <div class="section-heading tracker-heading">
+                <div>
+                    <p class="section-kicker">YOUR PIPELINE</p>
+                    <h2 id="tracker-heading">Applications</h2>
+                </div>
+                <span id="applicationLabel" class="application-label">0 applications</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th><th>Job title</th><th>Date applied</th><th>Status</th><th>Details</th>
+                            <th><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationTable"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon" aria-hidden="true">＋</div>
+                    <h3>No applications yet</h3>
+                    <p>Add your first opportunity above to start building your pipeline.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="editDialog" class="edit-dialog">
+        <form id="editForm">
+            <div class="dialog-header">
+                <div>
+                    <p class="section-kicker">APPLICATION DETAILS</p>
+                    <h2>Edit application</h2>
+                </div>
+                <button id="closeDialog" class="icon-button" type="button" aria-label="Close edit dialog">×</button>
+            </div>
+            <input id="editIndex" type="hidden">
+            <div class="form-grid edit-grid">
+                <label>Company<input id="editCompany" type="text" required></label>
+                <label>Job title<input id="editJobTitle" type="text" required></label>
+                <label>Date applied<input id="editDateApplied" type="date" required></label>
+                <label>Status
+                    <select id="editStatus">
+                        <option value="Applied">Applied</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </label>
+                <label class="details-field">Details <span class="optional">Optional</span>
+                    <textarea id="editDetails" rows="4"></textarea>
+                </label>
+            </div>
+            <div class="dialog-actions">
+                <button id="cancelEdit" class="secondary-button" type="button">Cancel</button>
+                <button class="primary-button" type="submit">Save changes</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="deleteDialog" class="delete-dialog">
+        <form id="deleteForm">
+            <div class="delete-symbol" aria-hidden="true">!</div>
+            <p class="section-kicker">REMOVE APPLICATION</p>
+            <h2>Delete this application?</h2>
+            <p id="deleteMessage" class="delete-message"></p>
+            <p class="delete-warning">This action can’t be undone.</p>
+            <input id="deleteIndex" type="hidden">
+            <div class="dialog-actions delete-actions">
+                <button id="cancelDelete" class="secondary-button" type="button">Keep application</button>
+                <button class="danger-button" type="submit">Delete application</button>
+            </div>
+        </form>
+    </dialog>
+    <script src="script.js"></script>
+</body>
+</html>
